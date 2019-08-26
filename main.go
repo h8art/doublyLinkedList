@@ -8,35 +8,27 @@ type Item struct {
 	next  *Item
 }
 type List struct {
-	storage []Item
-}
-
-func (s *List) Len() int {
-	return len(s.storage)
-}
-
-func (s *List) First() *Item {
-	return &s.storage[0]
-}
-
-func (s *List) Last() *Item {
-	return &s.storage[len(s.storage)-1]
+	FirstItem *Item
+	LastItem  *Item
+	len       int
 }
 
 func (s *List) PushBack(v interface{}) {
 	var newItem Item
-	newItem.prev = s.Last()
+	newItem.prev = s.LastItem
 	newItem.value = v
-	s.Last().next = &newItem
-	s.storage = append(s.storage, newItem)
+	s.LastItem.next = &newItem
+	s.LastItem = &newItem
+	s.len++
 }
 
 func (s *List) PushFront(v interface{}) {
 	var newItem Item
-	newItem.next = s.First()
+	newItem.next = s.FirstItem
 	newItem.value = v
-	s.First().prev = &newItem
-	s.storage = append([]Item{newItem}, s.storage...)
+	s.FirstItem.prev = &newItem
+	s.FirstItem = &newItem
+	s.len++
 }
 
 func (i *Item) Value() interface{} {
@@ -51,37 +43,46 @@ func (i *Item) Prev() *Item {
 	return i.prev
 }
 
-func (s *List) Find(x Item) int {
-	for i, n := range s.storage {
-		if x == n {
-			return i
+func (s *List) Find(i Item) *Item {
+	item := s.FirstItem
+	for j := 0; j < s.len; j++ {
+		if *item == i {
+			return item
+		} else {
+			item = item.next
 		}
 	}
-	return len(s.storage)
+	return nil
 }
 
 func (s *List) Remove(i Item) {
-	itemInd := s.Find(i)
-	s.storage = append(s.storage[:itemInd], s.storage[itemInd+1:]...)
-	s.storage[itemInd].prev = &s.storage[itemInd-1]
-	s.storage[itemInd].next = &s.storage[itemInd+1]
+	item := s.FirstItem
+	for j := 0; j < s.len; j++ {
+		if i == *item {
+			item.prev.next = item.next
+			item.next.prev = item.prev
+			s.len--
+		} else {
+			item = item.next
+		}
+	}
 }
 
 func main() {
 	var itemList List
 	var firstItem Item
 	firstItem.value = 0
-	itemList.storage = append(itemList.storage, firstItem)
-
+	itemList.FirstItem = &firstItem
+	itemList.LastItem = &firstItem
+	itemList.len = 1
 	itemList.PushFront(123)
 	itemList.PushBack(221)
 	itemList.PushBack(224)
-	fmt.Println(itemList.First())
-	fmt.Println(itemList.Last())
-	fmt.Println(itemList.Len())
-	fmt.Println(itemList.storage[1].Next())
-	fmt.Println(itemList.storage[1].Prev())
-	fmt.Println(itemList.storage)
-	itemList.Remove(itemList.storage[1])
-	fmt.Println(itemList.storage)
+	fmt.Println(itemList.FirstItem)
+	fmt.Println(itemList.LastItem)
+	fmt.Println(itemList.len)
+	var tempItem = *itemList.FirstItem.next
+	fmt.Println(tempItem)
+	fmt.Println("found item - ", itemList.Find(tempItem))
+	itemList.Remove(tempItem)
 }
