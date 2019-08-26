@@ -13,22 +13,22 @@ type List struct {
 	len       int
 }
 
-func (s *List) PushBack(v interface{}) {
+func (l *List) PushBack(v interface{}) {
 	var newItem Item
-	newItem.prev = s.LastItem
+	newItem.prev = l.LastItem
 	newItem.value = v
-	s.LastItem.next = &newItem
-	s.LastItem = &newItem
-	s.len++
+	l.LastItem.next = &newItem
+	l.LastItem = &newItem
+	l.len++
 }
 
-func (s *List) PushFront(v interface{}) {
+func (l *List) PushFront(v interface{}) {
 	var newItem Item
-	newItem.next = s.FirstItem
+	newItem.next = l.FirstItem
 	newItem.value = v
-	s.FirstItem.prev = &newItem
-	s.FirstItem = &newItem
-	s.len++
+	l.FirstItem.prev = &newItem
+	l.FirstItem = &newItem
+	l.len++
 }
 
 func (i *Item) Value() interface{} {
@@ -43,9 +43,9 @@ func (i *Item) Prev() *Item {
 	return i.prev
 }
 
-func (s *List) Find(i Item) *Item {
-	item := s.FirstItem
-	for j := 0; j < s.len; j++ {
+func (l *List) Find(i Item) *Item {
+	item := l.FirstItem
+	for j := 0; j < l.len; j++ {
 		if *item == i {
 			return item
 		} else {
@@ -55,13 +55,13 @@ func (s *List) Find(i Item) *Item {
 	return nil
 }
 
-func (s *List) Remove(i Item) {
-	item := s.FirstItem
-	for j := 0; j < s.len; j++ {
+func (l *List) Remove(i Item) {
+	item := l.FirstItem
+	for j := 0; j < l.len; j++ {
 		if i == *item {
 			item.prev.next = item.next
 			item.next.prev = item.prev
-			s.len--
+			l.len--
 		} else {
 			item = item.next
 		}
