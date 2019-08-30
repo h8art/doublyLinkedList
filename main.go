@@ -13,22 +13,38 @@ type List struct {
 	len       int
 }
 
-func (l *List) PushBack(v interface{}) {
+func (l *List) init(v interface{}) {
 	var newItem Item
-	newItem.prev = l.LastItem
 	newItem.value = v
-	l.LastItem.next = &newItem
+	l.FirstItem = &newItem
 	l.LastItem = &newItem
 	l.len++
 }
 
+func (l *List) PushBack(v interface{}) {
+	var newItem Item
+	if l.LastItem == nil || l.FirstItem == nil {
+		l.init(v)
+	} else {
+		newItem.prev = l.LastItem
+		newItem.value = v
+		l.LastItem.next = &newItem
+		l.LastItem = &newItem
+		l.len++
+	}
+}
+
 func (l *List) PushFront(v interface{}) {
 	var newItem Item
-	newItem.next = l.FirstItem
-	newItem.value = v
-	l.FirstItem.prev = &newItem
-	l.FirstItem = &newItem
-	l.len++
+	if l.LastItem == nil || l.FirstItem == nil {
+		l.init(v)
+	} else {
+		newItem.next = l.FirstItem
+		newItem.value = v
+		l.FirstItem.prev = &newItem
+		l.FirstItem = &newItem
+		l.len++
+	}
 }
 
 func (i *Item) Value() interface{} {
@@ -70,11 +86,6 @@ func (l *List) Remove(i Item) {
 
 func main() {
 	var itemList List
-	var firstItem Item
-	firstItem.value = 0
-	itemList.FirstItem = &firstItem
-	itemList.LastItem = &firstItem
-	itemList.len = 1
 	itemList.PushFront(123)
 	itemList.PushBack(221)
 	itemList.PushBack(224)
